@@ -2184,6 +2184,16 @@
     FT_Module*   cur;
     FT_Module*   limit;
 
+
+    /* only use lower 31 bits together with sign bit */
+    if ( face_index > 0 )
+      face_index &= 0x7FFFFFFFL;
+    else
+    {
+      face_index &= 0x7FFFFFFFL;
+      face_index  = -face_index;
+    }
+
 #ifndef FT_CONFIG_OPTION_MAC_FONTS
     FT_UNUSED( test_mac_fonts );
 #endif
@@ -3063,6 +3073,9 @@
 
     if ( !face )
       return FT_THROW( Invalid_Face_Handle );
+
+    if ( !face->size )
+      return FT_THROW( Invalid_Size_Handle );
 
     if ( !req || req->width < 0 || req->height < 0 ||
          req->type >= FT_SIZE_REQUEST_TYPE_MAX )
